@@ -30,10 +30,12 @@ class Laptop:
                 self._owner = value
 
         def getInfo(self) -> None:
-                print("Laptop specification! : ")
-                print("This laptop belongs to ", self.owner)
-                print(f"{self.brand} {self.size} {self.processor}")
-                print(f"It has operating System : {self.os}")
+                print("")
+                print("\tLaptop specification! : ")
+                print("\tThis laptop belongs to ", self.owner)
+                print(f"\t{self.brand} {self.size} {self.processor}")
+                print(f"\tIt has operating System : {self.os}")
+                print("")
 
         def updateSystem(self) -> None:
                 print("System is updating... Don't switch off the laptop")
@@ -62,27 +64,41 @@ class Laptop:
                 else:
                         print(f"Error: {newOs} is not compatible for this device.")
                         return False
-                
-def startApplication() -> None :
-        print("Welcome to Laptop Shop")
-        print("Purchase a laptop")
+
+listOfLaptops = ['Lenovo', 'HP', "ASUS", "Mac Book", "Dell"]
+
+def showLaptopCollection() -> None:
+    print("Our Laptops:")
+    for i in range(len(listOfLaptops)):  # Use range() for iterating over indices
+        print(f"\t{i+1}. {listOfLaptops[i]}")  # Use indexing to access elements
+    return
+
+purchasedLaptop = []
+
+def purchaseLaptop() -> None:
+        print("MAKE PURCHASE")
         brandName : str = input("Which brand you prefer?")
         screenSize : str = input("Which screen size?")
         processor : str = input("Which processor you prefer?")
 
         laptop : Laptop = Laptop(brandName, screenSize,processor)
+        purchasedLaptop.append(laptop)
         print("\n\nCongratulations on your new Laptop!!! BINGO!\n\n")
+        print("\n\nSetup your new Laptop\n\n")
+        setupLaptop(laptop)
+        return
 
-        exit: bool = False
-        while(exit == False):
-                print("Select Menu: \n\t 1. Get Information of Your Current Laptop.\n\t 2. Change your Operating System.\n\t 3. Create Account.")
+def setupLaptop(laptop : Laptop) -> None:
+        while(True):
+                print("Select Menu: \n\t 1. Get Information of Your Current Laptop.\n\t 2. Change your Operating System.")
                 menucount = 4
                 if(laptop.password is not None) :
-                        print(f"\t {menucount}. Change Password.")
-                        menucount+=1
-                print(f"\t {menucount}. EXIT")
+                        print(f"\t 3. Change Password.")
+                else:
+                        print("\t 3. Create Account.")
+                print(f"\t 4. Setup Done.")
                 try:
-                        optionSelected = int(input("\t"))
+                        optionSelected = int(input("Enter Option: "))
                 except ValueError :
                         print("Enter valid number!")
                 if optionSelected == 1 :
@@ -91,21 +107,61 @@ def startApplication() -> None :
                         newOs : str = input("Which operating system you want: ")
                         laptop.installOperatingSystem(newOs)
                 elif optionSelected == 3 :
-                        userName : str = input("Username: ")
-                        password : str = input("Password: ")
-                        laptop.owner = userName
-                        laptop.password =password
-                elif optionSelected==4 and menucount==5:
-                        oldPassword = input("Enter old Password: ")
-                        if(oldPassword == laptop.password):
-                                newPassword = input("Enter new Password: ")
-                                laptop.password = newPassword
-                                print("Your password has been updated.")
+                        if (laptop.password is None):
+                                userName : str = input("Username: ")
+                                password : str = input("Password: ")
+                                laptop.owner = userName
+                                laptop.password =password
+                                # processing()
+                                print("\tYour Account has been Created!")
                         else:
-                                print("You entered wrong password!")
+                                oldPassword = input("Enter old Password: ")
+                                if(oldPassword == laptop.password):
+                                        newPassword = input("Enter new Password: ")
+                                        laptop.password = newPassword
+                                        symbol : str = '/'
+                                        cur = 0
+                                        time_to_wait = 3; #for 3 sec the process will; continue
+                                        while(cur < time_to_wait):
+                                                sys.stdout.write(f"\rChanging Password... {symbol}")
+                                                sys.stdout.flush()
+                                                if symbol == '/' : symbol = '\\'
+                                                else: symbol = '/'
+                                                time.sleep(0.5)
+                                                cur += 1
+                                        
+                                        print("\tYour password has been updated.")
+                                else:
+                                        print("\tYou entered wrong password!")
                 else:
-                        print("Thank you for visiting! Have a good day.")
-                        exit = True;
+                        print("You have completed the SETUP.")
+                        break
+
+def customerExit() -> None:
+        print("Thank you for visiting! Have a good day.")
+
+def startApplication() -> None :
+        print("Welcome to Laptop Shop")
+
+        while True: 
+                print("1. Check our Laptop Collection.")
+                if len(purchasedLaptop) > 0:
+                        print("2. See details of Purchased Laptop.")
+                else:
+                        print("2. Purchase a laptop")
+                print("3. Checkout.")
+                optionSelected = input("ENTER A OPTION: ")
+                if(optionSelected == '1'):
+                        showLaptopCollection()
+                elif(optionSelected == '2'):
+                        #purchase
+                        if len(purchasedLaptop) > 0:
+                                purchasedLaptop[0].getInfo()
+                        else:
+                                purchaseLaptop()
+                else:
+                        customerExit()
+                        break
 
 
 
